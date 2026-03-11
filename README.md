@@ -22,7 +22,7 @@ A simple Flutter application that fetches and displays a list of users from an A
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Harsh2548/project_starter.git
 cd project_starter
 ```
 
