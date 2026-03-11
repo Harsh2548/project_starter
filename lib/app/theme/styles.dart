@@ -111,4 +111,10 @@ class Styles {
     fontSize: ScreenUtil().setSp(12),
     fontFamily: _fontFamily,
   );
+
+  static TextStyle lightBody = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    color: AppColors.white,
+  );
 }

@@ -1,42 +1,62 @@
+import 'package:get/get.dart';
 import 'package:project_starter/app/data/repository/home_repository.dart';
+import 'package:project_starter/app/data/values/constants.dart';
+import 'package:project_starter/app/modules/home/models/user_response.dart';
 import 'package:project_starter/base/base_controller.dart';
-
-import '../../../../utils/helper/custom_snackbar.dart';
-import '../../../../utils/loader/loading_utils.dart';
 
 class HomeController extends BaseController<HomeRepository> {
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  final usersList = <UserResponse>[].obs;
+  final filteredUsers = <UserResponse>[].obs;
+
+  final Rx<RxStatus> usersListStatus = RxStatus.loading().obs;
 
   @override
   void onReady() {
     super.onReady();
+    getUserList();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  Future<void> getUserList() async {
+    usersListStatus.value = RxStatus.loading();
 
-  Future<void> apiCall() async {
     try {
-      LoadingUtils.showLoader();
-      final response = await repository.dummyAPI();
-      if (response.code == 200) {
-        LoadingUtils.hideLoader();
-        CustomSnackBar.showSuccess(response.message);
+      final response = await repository.userAPI();
+
+      if (response.isNotEmpty) {
+        usersList.assignAll(response);
+        filteredUsers.assignAll(response);
+        usersListStatus.value = RxStatus.success();
       } else {
-        LoadingUtils.hideLoader();
-        CustomSnackBar.showError(response.message);
+        usersListStatus.value = RxStatus.empty();
       }
+
     } catch (e) {
-      LoadingUtils.hideLoader();
-      final String err =  e.toString().toLowerCase().startsWith('type') ?  "Something went wrong." : e.toString();
-      CustomSnackBar.showError(err);
+      LoggerPrint.error(e.toString());
+      usersListStatus.value = RxStatus.error(e.toString());
     }
   }
 
+  /// Search Users
+  void onSearch(String value) {
+
+    if (value.isEmpty) {
+      filteredUsers.assignAll(usersList);
+      return;
+    }
+
+    final query = value.toLowerCase();
+
+    filteredUsers.assignAll(
+      usersList.where((user) =>
+      (user.name ?? "").toLowerCase().contains(query) ||
+          (user.email ?? "").toLowerCase().contains(query) ||
+          (user.company?.name ?? "").toLowerCase().contains(query)),
+    );
+  }
+
+  /// Pull to Refresh
+  Future<void> refreshUsers() async {
+    await getUserList();
+  }
 }

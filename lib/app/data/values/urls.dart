@@ -1,8 +1,8 @@
 class URLs {
   URLs._privateConstructor();
 
-  static const String testUrl = "https://smart-student-vault.onrender.com";
-  static const String prodUrl = "https://filekavachapp.celestialitverse.com";
+  static const String testUrl = "";
+  static const String prodUrl = "";
   static const String baseURL = prodUrl;
   static const String apiUrl = "$baseURL/api/v1";
 
@@ -11,5 +11,5 @@ class URLs {
   static const String termsCondition = "";
 
   /// Dummy
-  static const String dummyAPI = "";
+  static const String userAPI = "https://jsonplaceholder.typicode.com/users";
 }

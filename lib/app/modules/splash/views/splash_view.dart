@@ -14,7 +14,7 @@ class SplashView extends GetView<SplashController> {
         child: Hero(
           tag: 'logo',
           child: Image.asset(
-            Images.logoName,
+            Images.logo,
             width: Get.width / 1.5,
             // color: Colors.white,
           ),

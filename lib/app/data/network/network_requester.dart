@@ -89,17 +89,48 @@ class NetworkRequester {
   }) async {
     try {
       final response = await _dio.get(path, queryParameters: query);
-      final jsonResponse = json.decode(json.encode(response.data));
-      if ((jsonResponse["success"] ?? jsonResponse["status"] ?? false)) {
+
+      final jsonResponse = response.data;
+
+      /// If API returns List (like users API)
+      if (jsonResponse is List) {
         return jsonResponse;
-      }else {
-        var message = decodeMessage(jsonResponse);
-        throw message;
       }
+
+      /// If API returns Map
+      if (jsonResponse is Map<String, dynamic>) {
+        if ((jsonResponse["success"] ?? jsonResponse["status"] ?? true)) {
+          return jsonResponse;
+        } else {
+          var message = decodeMessage(jsonResponse);
+          throw message;
+        }
+      }
+
+      return jsonResponse;
+
     } on Exception catch (exception) {
       return ExceptionHandler.handleError(exception);
     }
   }
+
+  // Future<dynamic> get({
+  //   required String path,
+  //   Map<String, dynamic>? query,
+  // }) async {
+  //   try {
+  //     final response = await _dio.get(path, queryParameters: query);
+  //     final jsonResponse = json.decode(json.encode(response.data));
+  //     if ((jsonResponse["success"] ?? jsonResponse["status"] ?? false)) {
+  //       return jsonResponse;
+  //     }else {
+  //       var message = decodeMessage(jsonResponse);
+  //       throw message;
+  //     }
+  //   } on Exception catch (exception) {
+  //     return ExceptionHandler.handleError(exception);
+  //   }
+  // }
 
   Future<dynamic> post({
     required String path,
